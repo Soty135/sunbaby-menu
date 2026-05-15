@@ -73,7 +73,7 @@
     width: 100%;
     overflow: hidden;
     position: relative;
-    touch-action: pan-y;
+    touch-action: none;
   }
 
   .carousel-track {
@@ -373,7 +373,6 @@
     }, { passive: true });
 
     carousel.addEventListener('touchmove', function(e) {
-      if (touchStartY > 60) return;
       var dy = e.changedTouches[0].screenY - touchStartY;
       if (dy > 20) {
         ptr.classList.add('visible');
@@ -387,14 +386,18 @@
     carousel.addEventListener('touchend', function(e) {
       var dx = e.changedTouches[0].screenX - touchStartX;
       var dy = e.changedTouches[0].screenY - touchStartY;
-      if (touchStartY <= 60 && dy > 80) {
+      var adx = dx < 0 ? -dx : dx;
+      var ady = dy < 0 ? -dy : dy;
+      if (ady > adx && dy > 80) {
         ptrText.textContent = 'Refreshing...';
-        location.reload();
+        setTimeout(function() { location.reload(); }, 100);
         return;
       }
       ptr.classList.remove('visible', 'ready');
-      if (dx < -40) slideTo(current + 1);
-      else if (dx > 40) slideTo(current - 1);
+      if (adx > ady) {
+        if (dx < -40) slideTo(current + 1);
+        else if (dx > 40) slideTo(current - 1);
+      }
     }, { passive: true });
 
     track.addEventListener('transitionend', clamp);
