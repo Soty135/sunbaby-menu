@@ -65,8 +65,40 @@
     justify-content: center;
     position: relative;
   }
+  .slide a {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
 
   .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .hiddenslide {
+    flex: 0 0 100%;
+    height: 100dvh;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    pointer-events: none;
+  }
+  .hiddenslide a {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  .hiddenslide img {
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -155,60 +187,89 @@
 <button class="nav-btn nav-next" id="nextBtn" aria-label="Next page">›</button>
 
 <div class="carousel" id="carousel">
-  <div class="slide"><img src="images/page_01.jpg" alt="Menu page 1" loading="lazy"></div>
-  <div class="slide"><img src="images/page_02.jpg" alt="Menu page 2" loading="lazy"></div>
-  <div class="slide"><img src="images/page_03.jpg" alt="Menu page 3" loading="lazy"></div>
-  <div class="slide"><img src="images/page_04.jpg" alt="Menu page 4" loading="lazy"></div>
-  <div class="slide"><img src="images/page_05.jpg" alt="Menu page 5" loading="lazy"></div>
-  <div class="slide"><img src="images/page_06.jpg" alt="Menu page 6" loading="lazy"></div>
-  <div class="slide"><img src="images/page_07.jpg" alt="Menu page 7" loading="lazy"></div>
-  <div class="slide"><img src="images/page_08.jpg" alt="Menu page 8" loading="lazy"></div>
+  <div class="hiddenslide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_08.jpg" alt="Menu page 8" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_01.jpg" alt="Menu page 1" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_02.jpg" alt="Menu page 2" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_03.jpg" alt="Menu page 3" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_04.jpg" alt="Menu page 4" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_05.jpg" alt="Menu page 5" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_06.jpg" alt="Menu page 6" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_07.jpg" alt="Menu page 7" loading="lazy"></a></div>
+  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_08.jpg" alt="Menu page 8" loading="lazy"></a></div>
+  <div class="hiddenslide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_01.jpg" alt="Menu page 1" loading="lazy"></a></div>
 </div>
 
 <script>
   const carousel = document.getElementById('carousel');
-  const slides = carousel.querySelectorAll('.slide');
-  const totalSlides = slides.length;
+  const allSlides = carousel.querySelectorAll('.slide, .hiddenslide');
+  const realSlides = document.querySelectorAll('.slide');
+  const totalReal = realSlides.length;
   const pageIndicator = document.getElementById('pageIndicator');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const loading = document.getElementById('loading');
 
+  const LINK_URL = 'https://sunbaby-special-pckm.vercel.app/';
+
   let currentIndex = 0;
+  let isJumping = false;
 
   function updateUI() {
-    pageIndicator.textContent = `${currentIndex + 1} / ${totalSlides}`;
-    prevBtn.classList.toggle('hidden', currentIndex === 0);
-    nextBtn.classList.toggle('hidden', currentIndex === totalSlides - 1);
+    pageIndicator.textContent = `${currentIndex + 1} / ${totalReal}`;
   }
 
-  function goToSlide(index) {
-    if (index < 0 || index >= totalSlides) return;
-    currentIndex = index;
-    const slide = slides[index];
-    slide.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+  function getRealIndex(closestIndex) {
+    return (closestIndex - 1 + totalReal) % totalReal;
+  }
+
+  function goToSlide(index, instant = false) {
+    const target = index + 1;
+    if (target < 0 || target >= allSlides.length) return;
+    currentIndex = (index + totalReal) % totalReal;
+    const slide = allSlides[target];
+    slide.scrollIntoView({ behavior: instant ? 'instant' : 'smooth', block: 'nearest', inline: 'start' });
     updateUI();
   }
 
-  prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
-  nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
-
-  carousel.addEventListener('scroll', () => {
+  function jumpToClamped() {
     const scrollLeft = carousel.scrollLeft;
     const slideWidth = carousel.clientWidth;
-    const index = Math.round(scrollLeft / slideWidth);
-    if (index !== currentIndex && index >= 0 && index < totalSlides) {
-      currentIndex = index;
+    const closest = Math.round(scrollLeft / slideWidth);
+
+    if (closest === 0) {
+      isJumping = true;
+      currentIndex = totalReal - 1;
+      carousel.scrollTo({ left: totalReal * slideWidth, behavior: 'instant' });
       updateUI();
+      requestAnimationFrame(() => { isJumping = false; });
+    } else if (closest === allSlides.length - 1) {
+      isJumping = true;
+      currentIndex = 0;
+      carousel.scrollTo({ left: 1 * slideWidth, behavior: 'instant' });
+      updateUI();
+      requestAnimationFrame(() => { isJumping = false; });
+    } else {
+      const real = getRealIndex(closest);
+      if (real !== currentIndex) {
+        currentIndex = real;
+        updateUI();
+      }
     }
+  }
+
+  prevBtn.addEventListener('click', () => {
+    goToSlide(currentIndex - 1);
   });
 
-  let touchStartX = 0;
-  let touchStartY = 0;
-  carousel.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-  }, { passive: true });
+  nextBtn.addEventListener('click', () => {
+    goToSlide(currentIndex + 1);
+  });
+
+  carousel.addEventListener('scroll', () => {
+    if (!isJumping) {
+      jumpToClamped();
+    }
+  });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
@@ -219,7 +280,17 @@
     setTimeout(() => loading.classList.add('hidden'), 300);
   });
 
+  carousel.scrollTo({ left: 1 * carousel.clientWidth, behavior: 'instant' });
+  currentIndex = 0;
   updateUI();
+
+  allSlides.forEach(slide => {
+    const a = slide.querySelector('a');
+    if (a) a.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.open(LINK_URL, '_blank');
+    });
+  });
 </script>
 </body>
 </html>
