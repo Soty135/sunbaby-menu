@@ -14,7 +14,7 @@
     overflow: hidden;
     height: 100dvh;
     width: 100vw;
-    touch-action: pan-y;
+
   }
 
   .header {
@@ -49,6 +49,7 @@
     width: 100%;
     overflow: hidden;
     position: relative;
+    touch-action: pan-y;
   }
 
   .carousel-track {
@@ -300,31 +301,28 @@
     const totalSlides = slides.length;
 
     let current = 1;
-    let isAnimating = false;
 
     function update() {
       const realIndex = ((current - 1) % TOTAL + TOTAL) % TOTAL;
       pageIndicator.textContent = (realIndex + 1) + ' / ' + TOTAL;
-      prevBtn.classList.toggle('hidden', false);
-      nextBtn.classList.toggle('hidden', false);
     }
 
     function go(index, instant) {
-      if (isAnimating && !instant) return;
       current = index;
       const offset = -current * 100;
-      if (instant) track.classList.add('no-transition');
-      track.style.transform = 'translateX(' + offset + '%)';
       if (instant) {
+        track.classList.add('no-transition');
+        track.style.transform = 'translateX(' + offset + '%)';
         track.offsetHeight;
         track.classList.remove('no-transition');
+      } else {
+        track.style.transform = 'translateX(' + offset + '%)';
       }
       update();
     }
 
     function slideTo(index) {
-      if (isAnimating) return;
-      isAnimating = true;
+      if (index < 0 || index >= totalSlides) return;
       go(index, false);
     }
 
@@ -332,6 +330,17 @@
       if (current === 0) go(TOTAL, true);
       else if (current === totalSlides - 1) go(1, true);
     }
+
+    var touchStartX = 0;
+    carousel.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].screenX - touchStartX;
+      if (dx < -40) slideTo(current + 1);
+      else if (dx > 40) slideTo(current - 1);
+    }, { passive: true });
 
     track.addEventListener('transitionend', clamp);
 
@@ -347,31 +356,6 @@
       if (e.key === 'ArrowLeft') slideTo(current - 1);
       if (e.key === 'ArrowRight') slideTo(current + 1);
     });
-
-    var touchStartX = 0;
-    var touchStartY = 0;
-    var isSwiping = false;
-
-    carousel.addEventListener('touchstart', function(e) {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
-      isSwiping = false;
-    }, { passive: true });
-
-    carousel.addEventListener('touchmove', function(e) {
-      if (!isSwiping) {
-        var dx = e.changedTouches[0].screenX - touchStartX;
-        var dy = e.changedTouches[0].screenY - touchStartY;
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 5) isSwiping = true;
-      }
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', function(e) {
-      if (!isSwiping) return;
-      var dx = e.changedTouches[0].screenX - touchStartX;
-      if (dx < -30) slideTo(current + 1);
-      else if (dx > 30) slideTo(current - 1);
-    }, { passive: true });
 
     window.addEventListener('load', function() {
       setTimeout(function() { loading.classList.add('hidden'); }, 300);
