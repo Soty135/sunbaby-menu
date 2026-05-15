@@ -52,11 +52,10 @@
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
   }
   .carousel::-webkit-scrollbar { display: none; }
 
-  .slide {
+  .slide, .hiddenslide {
     flex: 0 0 100%;
     height: 100dvh;
     scroll-snap-align: start;
@@ -65,14 +64,9 @@
     justify-content: center;
     position: relative;
   }
-  .slide a {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
+  .hiddenslide { pointer-events: none; }
 
-  .slide img {
+  .slide img, .hiddenslide img {
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -82,31 +76,38 @@
     -webkit-touch-callout: none;
   }
 
-  .hiddenslide {
-    flex: 0 0 100%;
-    height: 100dvh;
-    scroll-snap-align: start;
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
     display: flex;
-    align-items: center;
     justify-content: center;
-    position: relative;
+    padding: 12px 16px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%);
     pointer-events: none;
   }
-  .hiddenslide a {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
+  .bottom-bar .site-link {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: background 0.2s;
+    -webkit-tap-highlight-color: transparent;
   }
-  .hiddenslide img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-  }
+  .bottom-bar .site-link:hover { background: rgba(255,255,255,0.25); }
+  .bottom-bar .site-link:active { background: rgba(255,255,255,0.35); }
+  .bottom-bar .site-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
   .nav-btn {
     position: fixed;
@@ -187,47 +188,139 @@
 <button class="nav-btn nav-next" id="nextBtn" aria-label="Next page">›</button>
 
 <div class="carousel" id="carousel">
-  <div class="hiddenslide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_08.jpg" alt="Menu page 8" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_01.jpg" alt="Menu page 1" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_02.jpg" alt="Menu page 2" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_03.jpg" alt="Menu page 3" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_04.jpg" alt="Menu page 4" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_05.jpg" alt="Menu page 5" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_06.jpg" alt="Menu page 6" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_07.jpg" alt="Menu page 7" loading="lazy"></a></div>
-  <div class="slide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_08.jpg" alt="Menu page 8" loading="lazy"></a></div>
-  <div class="hiddenslide"><a href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer"><img src="images/page_01.jpg" alt="Menu page 1" loading="lazy"></a></div>
+  <div class="hiddenslide">
+    <img src="images/page_08.jpg" alt="Menu page 8" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_01.jpg" alt="Menu page 1" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_02.jpg" alt="Menu page 2" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_03.jpg" alt="Menu page 3" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_04.jpg" alt="Menu page 4" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_05.jpg" alt="Menu page 5" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_06.jpg" alt="Menu page 6" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_07.jpg" alt="Menu page 7" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="slide">
+    <img src="images/page_08.jpg" alt="Menu page 8" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
+  <div class="hiddenslide">
+    <img src="images/page_01.jpg" alt="Menu page 1" loading="lazy">
+    <div class="bottom-bar">
+      <a class="site-link" href="https://sunbaby-special-pckm.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Visit our website
+      </a>
+    </div>
+  </div>
 </div>
 
 <script>
   const carousel = document.getElementById('carousel');
   const allSlides = carousel.querySelectorAll('.slide, .hiddenslide');
-  const realSlides = document.querySelectorAll('.slide');
-  const totalReal = realSlides.length;
+  const totalReal = 8;
   const pageIndicator = document.getElementById('pageIndicator');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const loading = document.getElementById('loading');
 
-  const LINK_URL = 'https://sunbaby-special-pckm.vercel.app/';
-
   let currentIndex = 0;
   let isJumping = false;
+  let smoothId = null;
 
   function updateUI() {
     pageIndicator.textContent = `${currentIndex + 1} / ${totalReal}`;
   }
 
-  function getRealIndex(closestIndex) {
-    return (closestIndex - 1 + totalReal) % totalReal;
+  function smoothScrollTo(targetScrollLeft) {
+    if (smoothId) cancelAnimationFrame(smoothId);
+    const start = carousel.scrollLeft;
+    const distance = targetScrollLeft - start;
+    const duration = 300;
+    const startTime = performance.now();
+
+    function step(now) {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      carousel.scrollLeft = start + distance * ease;
+      if (t < 1) smoothId = requestAnimationFrame(step);
+      else smoothId = null;
+    }
+    smoothId = requestAnimationFrame(step);
   }
 
-  function goToSlide(index, instant = false) {
+  function goToSlide(index) {
     const target = index + 1;
     if (target < 0 || target >= allSlides.length) return;
     currentIndex = (index + totalReal) % totalReal;
-    const slide = allSlides[target];
-    slide.scrollIntoView({ behavior: instant ? 'instant' : 'smooth', block: 'nearest', inline: 'start' });
+    const slideWidth = carousel.clientWidth;
+    smoothScrollTo(target * slideWidth);
     updateUI();
   }
 
@@ -239,18 +332,18 @@
     if (closest === 0) {
       isJumping = true;
       currentIndex = totalReal - 1;
-      carousel.scrollTo({ left: totalReal * slideWidth, behavior: 'instant' });
+      carousel.scrollLeft = totalReal * slideWidth;
       updateUI();
       requestAnimationFrame(() => { isJumping = false; });
     } else if (closest === allSlides.length - 1) {
       isJumping = true;
       currentIndex = 0;
-      carousel.scrollTo({ left: 1 * slideWidth, behavior: 'instant' });
+      carousel.scrollLeft = 1 * slideWidth;
       updateUI();
       requestAnimationFrame(() => { isJumping = false; });
     } else {
-      const real = getRealIndex(closest);
-      if (real !== currentIndex) {
+      const real = (closest - 1 + totalReal) % totalReal;
+      if (real !== currentIndex && !isJumping) {
         currentIndex = real;
         updateUI();
       }
@@ -266,9 +359,7 @@
   });
 
   carousel.addEventListener('scroll', () => {
-    if (!isJumping) {
-      jumpToClamped();
-    }
+    if (!isJumping) jumpToClamped();
   });
 
   document.addEventListener('keydown', (e) => {
@@ -280,17 +371,9 @@
     setTimeout(() => loading.classList.add('hidden'), 300);
   });
 
-  carousel.scrollTo({ left: 1 * carousel.clientWidth, behavior: 'instant' });
+  carousel.scrollLeft = 1 * carousel.clientWidth;
   currentIndex = 0;
   updateUI();
-
-  allSlides.forEach(slide => {
-    const a = slide.querySelector('a');
-    if (a) a.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.open(LINK_URL, '_blank');
-    });
-  });
 </script>
 </body>
 </html>
