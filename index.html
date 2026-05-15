@@ -14,8 +14,32 @@
     overflow: hidden;
     height: 100dvh;
     width: 100vw;
-
   }
+
+  .ptr {
+    position: fixed;
+    top: -60px;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 60px;
+    background: rgba(17,17,17,0.95);
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.2s;
+  }
+  .ptr.visible { transform: translateY(60px); }
+  .ptr .ptr-arrow {
+    display: inline-block;
+    font-size: 18px;
+    transition: transform 0.2s;
+  }
+  .ptr.ready .ptr-arrow { transform: rotate(180deg); }
 
   .header {
     position: fixed;
@@ -184,12 +208,17 @@
   <p>Loading menu...</p>
 </div>
 
+<div class="ptr" id="ptr">
+  <span class="ptr-arrow" id="ptrArrow">↓</span>
+  <span id="ptrText">Pull to refresh</span>
+</div>
+
 <div class="header">
   <h1>Sunbaby Special</h1>
   <span class="page-indicator" id="pageIndicator">1 / 8</span>
 </div>
 
-<button class="nav-btn nav-prev hidden" id="prevBtn" aria-label="Previous page">‹</button>
+<button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous page">‹</button>
 <button class="nav-btn nav-next" id="nextBtn" aria-label="Next page">›</button>
 
 <div class="carousel" id="carousel">
@@ -332,12 +361,38 @@
     }
 
     var touchStartX = 0;
+    var touchStartY = 0;
+    var ptr = document.getElementById('ptr');
+    var ptrArrow = document.getElementById('ptrArrow');
+    var ptrText = document.getElementById('ptrText');
+
     carousel.addEventListener('touchstart', function(e) {
       touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+      ptr.classList.remove('visible', 'ready');
+    }, { passive: true });
+
+    carousel.addEventListener('touchmove', function(e) {
+      if (touchStartY > 60) return;
+      var dy = e.changedTouches[0].screenY - touchStartY;
+      if (dy > 20) {
+        ptr.classList.add('visible');
+        if (dy > 80) ptr.classList.add('ready');
+        else ptr.classList.remove('ready');
+      } else {
+        ptr.classList.remove('visible', 'ready');
+      }
     }, { passive: true });
 
     carousel.addEventListener('touchend', function(e) {
       var dx = e.changedTouches[0].screenX - touchStartX;
+      var dy = e.changedTouches[0].screenY - touchStartY;
+      if (touchStartY <= 60 && dy > 80) {
+        ptrText.textContent = 'Refreshing...';
+        location.reload();
+        return;
+      }
+      ptr.classList.remove('visible', 'ready');
       if (dx < -40) slideTo(current + 1);
       else if (dx > 40) slideTo(current - 1);
     }, { passive: true });
